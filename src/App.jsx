@@ -50,16 +50,20 @@ export default function App() {
   const [viewMode, setViewMode] = useState('side-by-side');
   const [exporting, setExporting] = useState(false);
   const [showLabels, setShowLabels] = useState(true);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('diffshot-theme');
+    return saved === 'dark' || saved === 'light' ? saved : 'light';
+  });
   const [imageTransform, setImageTransform] = useState({
     before: { x: 0, y: 0, zoom: 1 },
     after: { x: 0, y: 0, zoom: 1 },
   });
   const containerRef = useRef(null);
 
-  // Sync theme class on <html> so body/root vars update globally
+  // Sync theme class on <html> and persist preference
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('diffshot-theme', theme);
   }, [theme]);
 
   const bothUploaded = images.before.cropped && images.after.cropped;
